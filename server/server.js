@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import categoryRouter from './routes/route.js';
 import dotenv from 'dotenv';
+import categoryRouter from './routes/route.js';
+import connectDB from './db/connection.js';
 
 const app = express();
 dotenv.config({ path: './config.env' });
@@ -16,6 +17,15 @@ app.use(express.json());
 // using routes
 app.use(categoryRouter);
 
-app.listen(port, () => {
-  console.log('Server is running on port: ' + port);
-});
+// mongodb connection
+
+const start = async () => {
+  try {
+    await connectDB(process.env.ATLAS_URI);
+    app.listen(port, () => console.log(`Server is listening on ${port}`));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();
